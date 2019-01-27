@@ -35,13 +35,9 @@ function signInResponse() {
 
   if (response.hasOwnProperty('error')) {
     document.querySelector('.sign-in-htm').getElementsByTagName('output')[0].value = response.message;
-
-    return;
+  } else {
+    document.querySelector('.sign-in-htm').getElementsByTagName('output')[0].value = `Пользователь ${response.name} успешно авторизован`;
   }
-
-  document.querySelector('.sign-in-htm').getElementsByTagName('output')[0].value = '';
-
-  console.log(`Пользователь ${response.name} успешно авторизован`);
 }
 
 function signUpResponse() {
@@ -57,13 +53,9 @@ function signUpResponse() {
 
   if (response.hasOwnProperty('error')) {
     document.querySelector('.sign-up-htm').getElementsByTagName('output')[0].value = response.message;
-
-    return;
+  } else {
+    document.querySelector('.sign-up-htm').getElementsByTagName('output')[0].value = `Пользователь ${response.name} успешно зарегистрирован`;
   }
-
-  document.querySelector('.sign-up-htm').getElementsByTagName('output')[0].value = '';
-
-  console.log(`Пользователь ${response.name} успешно зарегистрирован`);
 }
 
 function init() {
