@@ -23,7 +23,7 @@ function signUp(event) {
 }
 
 function signInResponse() {
-  if (xhrSignIn.status !== 200) {
+  if (200 > xhrSignIn.status && xhrSignIn.status >= 300) {
     return;
   }
 
@@ -41,7 +41,7 @@ function signInResponse() {
 }
 
 function signUpResponse() {
-  if (xhrSignUp.status !== 200) {
+  if (200 > xhrSignUp.status && xhrSignUp.status >= 300) {
     return;
   }
 
