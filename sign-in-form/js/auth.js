@@ -11,13 +11,25 @@ xhrSignUp.open('POST', 'https://neto-api.herokuapp.com/signup');
 xhrSignUp.setRequestHeader('Content-Type', 'application/json');
 
 function signIn(event) {
-  xhrSignIn.send(JSON.stringify(new FormData(event.target)));
+  let data = {};
+  let formData = new FormData(event.target);
+  for (const [key, value] of formData) {
+    data[key] = value;
+  }
+
+  xhrSignIn.send(JSON.stringify(data));
 
   event.preventDefault();
 }
 
 function signUp(event) {
-  xhrSignUp.send(JSON.stringify(new FormData(event.target)));
+  let data = {};
+  let formData = new FormData(event.target);
+  for (const [key, value] of formData) {
+    data[key] = value;
+  }
+
+  xhrSignUp.send(JSON.stringify(data));
 
   event.preventDefault();
 }
