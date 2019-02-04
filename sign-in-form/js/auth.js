@@ -1,50 +1,54 @@
 'use strict';
 
-const xhrSignIn = new XMLHttpRequest();
-xhrSignIn.addEventListener('load', signInResponse);
-xhrSignIn.open('POST', 'https://neto-api.herokuapp.com/signin');
-xhrSignIn.setRequestHeader('Content-Type', 'application/json');
+const methods = {
+  'sign-in-htm': {
+    'url': 'https://neto-api.herokuapp.com/signin',
+    'callback': signInResponse
+  },
+  'sign-up-htm': {
+    'url': 'https://neto-api.herokuapp.com/signup',
+    'callback': signUpResponse
+  }
+};
 
-const xhrSignUp = new XMLHttpRequest();
-xhrSignUp.addEventListener('load', signUpResponse);
-xhrSignUp.open('POST', 'https://neto-api.herokuapp.com/signup');
-xhrSignUp.setRequestHeader('Content-Type', 'application/json');
+function sign(event) {
+  event.preventDefault();
 
-function signIn(event) {
   let data = {};
   let formData = new FormData(event.target);
   for (const [key, value] of formData) {
     data[key] = value;
   }
 
-  xhrSignIn.send(JSON.stringify(data));
+  let method;
+  for (let key in methods) {
+    if (event.target.classList.contains(key)) {
+      method = methods[key];
 
-  event.preventDefault();
+      break;
+    }
+  }
+
+  fetch(method.url, {
+    body: JSON.stringify(data),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  })
+    .then((response) => {
+      if (200 <= response.status && response.status < 300) {
+        return response;
+      }
+
+      throw new Error(response.statusText);
+    })
+    .then((response) => response.json())
+    .then((response) => method.callback(response))
+    .catch((error) => console.log(`Ошибка добавления в корзину: ${error}`));
 }
 
-function signUp(event) {
-  let data = {};
-  let formData = new FormData(event.target);
-  for (const [key, value] of formData) {
-    data[key] = value;
-  }
-
-  xhrSignUp.send(JSON.stringify(data));
-
-  event.preventDefault();
-}
-
-function signInResponse() {
-  if (200 > xhrSignIn.status && xhrSignIn.status >= 300) {
-    return;
-  }
-
-  try {
-    var response = JSON.parse(xhrSignIn.response);
-  } catch (error) {
-    return;
-  }
-
+function signInResponse(response) {
   if (response.hasOwnProperty('error')) {
     document.querySelector('.sign-in-htm').getElementsByTagName('output')[0].value = response.message;
   } else {
@@ -52,17 +56,7 @@ function signInResponse() {
   }
 }
 
-function signUpResponse() {
-  if (200 > xhrSignUp.status && xhrSignUp.status >= 300) {
-    return;
-  }
-
-  try {
-    var response = JSON.parse(xhrSignUp.response);
-  } catch (error) {
-    return;
-  }
-
+function signUpResponse(response) {
   if (response.hasOwnProperty('error')) {
     document.querySelector('.sign-up-htm').getElementsByTagName('output')[0].value = response.message;
   } else {
@@ -71,8 +65,8 @@ function signUpResponse() {
 }
 
 function init() {
-  document.querySelector('.sign-in-htm').addEventListener('submit', signIn);
-  document.querySelector('.sign-up-htm').addEventListener('submit', signUp);
+  document.querySelector('.sign-in-htm').addEventListener('submit', sign);
+  document.querySelector('.sign-up-htm').addEventListener('submit', sign);
 }
 
 document.addEventListener('DOMContentLoaded', init);
